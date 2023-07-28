@@ -51,13 +51,15 @@ async def server_handler_listen(client):
 
 ##-------------------------------------------------------------------Server sender----------------------------------------------------------------------------------------------
 ##------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-async def send_message(Id):
+async def send_message(Id,position):
     try:
         client = ClientAuthorisedSender[f'{Id}']
-        struct = r'{{"IDRobot":"{}","Position":[0,0,0]}}'
-        message = struct.format(Id)
-        await client.send(message)
-        await asyncio.sleep(0.02)
+        if position != None:
+            struct = r'{{"IDRobot":"{}","Position":[0,0,0]}}'
+            message = struct.format(Id)
+            await client.send(message)
+        else:
+            await client.send('OK')
     except KeyError:
         print(f'Cliend with ID {Id} doesnt exist')
 
@@ -69,10 +71,8 @@ async def server_handler_send(client):
         print(f'Client conected {client.id}')
         try:
             while len(ClientAuthorisedSender) != 0:
-                print('Do you want send a message? [y/n]')
-                Answer = input()
-                if Answer == 'y':
-                    await send_message(0)
+                await asyncio.sleep(10)
+                await send_message(0)
         except websockets.exceptions.ConnectionClosed:
             await disconect(client)
     else:
@@ -93,7 +93,7 @@ async def start_server(Ports):
 
 if __name__ == '__main__':
     Ports = [8765,8766]
-    Ip = '192.168.0.16'
+    Ip = '192.168.1.171'
     ClientAuthorisedSender = {}
     ClientAuthorisedListener = {}
     try:
