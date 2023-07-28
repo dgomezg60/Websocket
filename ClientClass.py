@@ -38,10 +38,11 @@ class client():
 ##-------------------------------------------------------------------Client Listening----------------------------------------------------------------------------------------------
 ##------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     async def ListeningServer(self):
-        while True:
-            Order = await self.__clientListener.recv()
+        Order = await self.__clientListener.recv()
+        if Order != 'OK':
             self.message = json.loads(Order)
             print("ID:{}, Position: {}".format(self.message['IDRobot'],self.message['Position']))
+        await self.ListeningServer()
 
 async def main():
     Amr = client(0)
@@ -55,6 +56,6 @@ async def main():
         print('Unathenticated')
 
 if __name__ == '__main__':
-    Ip = '192.168.0.16'
+    Ip = '192.168.1.171'
     Ports = [8765,8766]
     asyncio.run(main())
